@@ -21,7 +21,9 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.google.mediapipe.examples.poselandmarker.evaluator.PoseEvaluator
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
@@ -35,11 +37,14 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     // To define styles and colours for drawing keypoints and bone connections
     private var pointPaint = Paint()
     private var linePaint = Paint()
+    private var textPaint = Paint()
 
     // Adjust the drawn pose coordinates to fit the screen size
     private var scaleFactor: Float = 1f
     private var imageWidth: Int = 1
     private var imageHeight: Int = 1
+
+    private val poseEvaluator = PoseEvaluator()
 
     init {
         initPaints()
@@ -89,6 +94,17 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
                         poseLandmarkerResult.landmarks().get(0).get(it.end()).y() * imageHeight * scaleFactor,
                         linePaint)
                 }
+                // 使用 PoseEvaluator 评估姿势并显示结果
+//                val feetDistanceEvaluationMessage = poseEvaluator.checkFeetShoulderWidth(poseLandmarkerResult).message
+//                val feetDistanceEvaluationScore = poseEvaluator.checkFeetShoulderWidth(poseLandmarkerResult).score
+                val armsStraightEvaluationMessage = poseEvaluator.checkArmsStraight(poseLandmarkerResult).message
+                val armsStraightEvaluationScore = poseEvaluator.checkArmsStraight(poseLandmarkerResult).score
+                canvas.drawText(armsStraightEvaluationMessage, 50f, 100f, textPaint)
+                canvas.drawText(armsStraightEvaluationScore.toString(), 50f, 100f, textPaint)
+
+                // 弹出 Toast 提示，显示评估结果
+//                Toast.makeText(context, feetDistanceEvaluationMessage+feetDistanceEvaluationScore.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, armsStraightEvaluationMessage+armsStraightEvaluationScore.toString(), Toast.LENGTH_SHORT).show()
             }
         }
     }
