@@ -1,9 +1,9 @@
 package com.google.mediapipe.examples.poselandmarker.evaluator
 
-import com.google.common.math.DoubleMath.roundToInt
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import kotlin.math.abs
 import kotlin.math.atan2
+import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
@@ -13,7 +13,7 @@ class PoseEvaluator {
         // Constants for tolerance levels, adjust as needed
         private const val FEET_SHOULDER_TOLERANCE = 0.1f // Percentage tolerance for feet-shoulder width
         private const val ARM_ANGLE_TOLERANCE = 10.0f // Degree tolerance for arm angles
-        private const val SYMMETRY_AXIS_TOLERANCE = 10.0f // Degree tolerance for arm symmetry
+        private const val HAND_POSITION_TOLERANCE = 0.1f // Degree tolerance for arm symmetry
 
         // Function to calculate distance between two landmarks
         private fun calculateDistance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
@@ -37,6 +37,12 @@ class PoseEvaluator {
     )
 
     data class ArmsStraightResult(
+        val isCorrect: Boolean,
+        val message: String,
+        val score: Int
+    )
+
+    data class HandsPositionResult(
         val isCorrect: Boolean,
         val message: String,
         val score: Int
@@ -73,7 +79,7 @@ class PoseEvaluator {
             )
             else -> FeetPositionResult(
                 isCorrect = true,
-                message = "双脚距离刚好，符合肩宽。",
+                message = "Good job!",
                 score = 30
             )
         }
@@ -117,24 +123,45 @@ class PoseEvaluator {
             )
             else -> ArmsStraightResult(
                 isCorrect = true,
-                message = "Arms are straight.",
+                message = "Good job!",
                 score = 40
             )
         }
     }
 
     // Check if the symmetry axis of both arms is perpendicular to the ground
-//    fun checkSymmetryAxisVertical(poseLandmarks: PoseLandmarkerResult): Boolean {
-//        val leftElbow = poseLandmarks.landmarks().get(0)[13]
-//        val rightElbow = poseLandmarks.landmarks().get(0)[14]
-//
-//        // Symmetry axis: a line between the left and right elbows
-//        val symmetryAxisAngle = calculateAngle(
-//            0f, 0f, // Simulating a vertical line (0,0) to (1,0) for ground reference
-//            leftElbow.x(), leftElbow.y(),
-//            rightElbow.x(), rightElbow.y()
-//        )
-//
-//        return abs(symmetryAxisAngle - 90) <= SYMMETRY_AXIS_TOLERANCE
-//    }
+    fun checkHandsPosition(poseLandmarks: PoseLandmarkerResult): HandsPositionResult {
+        val leftShoulder = poseLandmarks.landmarks().get(0)[11]
+        val rightShoulder = poseLandmarks.landmarks().get(0)[12]
+        // 计算肩膀的中心点
+        val midShoulderX = (leftShoulder.x() + rightShoulder.x()) / 2
+        val midShoulderY = (leftShoulder.y() + rightShoulder.y()) / 2
+        // 获取左右手的坐标
+        val leftHand = poseLandmarks.landmarks().get(0)[15] // 左手腕
+        val rightHand = poseLandmarks.landmarks().get(0)[16] // 右手腕
+        // 计算左手和右手相对于肩膀中点的x轴偏移
+        val leftHandOffsetX = abs(leftHand.x() - midShoulderX)
+        val rightHandOffsetX = abs(rightHand.x() - midShoulderX)
+
+
+        // 计算肩膀的宽度
+        val shoulderWidth = calculateDistance(leftShoulder.x(), leftShoulder.y(), rightShoulder.x(), rightShoulder.y())
+
+        // 手臂偏差在合理范围内的评分公式
+        val leftHandScore = max(0.0f,1 - (leftHandOffsetX / (shoulderWidth)) * 15)
+        val rightHandScore = max(0.0f,(1 - (rightHandOffsetX / (shoulderWidth))) * 15)
+
+        return when{
+            leftHandScore + rightHandScore < 30 -> HandsPositionResult(
+                isCorrect = false,
+                message = "Hands are not in the right position.",
+                score = (leftHandScore + rightHandScore).toInt()
+            )
+            else -> HandsPositionResult(
+                isCorrect = true,
+                message = "Good job!",
+                score = 30
+            )
+        }
+    }
 }

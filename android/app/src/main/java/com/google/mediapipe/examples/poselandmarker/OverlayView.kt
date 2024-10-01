@@ -97,14 +97,17 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
                 // 使用 PoseEvaluator 评估姿势并显示结果
 //                val feetDistanceEvaluationMessage = poseEvaluator.checkFeetShoulderWidth(poseLandmarkerResult).message
 //                val feetDistanceEvaluationScore = poseEvaluator.checkFeetShoulderWidth(poseLandmarkerResult).score
-                val armsStraightEvaluationMessage = poseEvaluator.checkArmsStraight(poseLandmarkerResult).message
-                val armsStraightEvaluationScore = poseEvaluator.checkArmsStraight(poseLandmarkerResult).score
-                canvas.drawText(armsStraightEvaluationMessage, 50f, 100f, textPaint)
-                canvas.drawText(armsStraightEvaluationScore.toString(), 50f, 100f, textPaint)
+//                val armsStraightEvaluationMessage = poseEvaluator.checkArmsStraight(poseLandmarkerResult).message
+//                val armsStraightEvaluationScore = poseEvaluator.checkArmsStraight(poseLandmarkerResult).score
+                val handsPositionEvaluationMessage = poseEvaluator.checkHandsPosition(poseLandmarkerResult).message
+                val handsPositionEvaluationScore = poseEvaluator.checkHandsPosition(poseLandmarkerResult).score
+//                canvas.drawText(armsStraightEvaluationMessage, 50f, 100f, textPaint)
+//                canvas.drawText(armsStraightEvaluationScore.toString(), 50f, 100f, textPaint)
 
                 // 弹出 Toast 提示，显示评估结果
 //                Toast.makeText(context, feetDistanceEvaluationMessage+feetDistanceEvaluationScore.toString(), Toast.LENGTH_SHORT).show()
-                Toast.makeText(context, armsStraightEvaluationMessage+armsStraightEvaluationScore.toString(), Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context, armsStraightEvaluationMessage+armsStraightEvaluationScore.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, handsPositionEvaluationMessage+handsPositionEvaluationScore.toString(), Toast.LENGTH_SHORT).show()
             }
         }
     }
