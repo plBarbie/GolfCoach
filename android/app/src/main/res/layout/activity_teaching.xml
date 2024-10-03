@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- New Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/toolbar_background">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <!-- Three buttons with equal size and margin -->
+                <Button
+                    android:id="@+id/button_standing"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Standing"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp" />
+
+                <Button
+                    android:id="@+id/button_back_swing"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="Back Swing" />
+
+                <Button
+                    android:id="@+id/button_follow_through"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Follow Through"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+        <!-- NavHostFragment -->
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragment_container"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/toolbar"
+            android:background="@android:color/transparent"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_graph"
+            tools:context=".MainActivity" />
+
+        <!-- Real-time TextView on top of the FragmentContainerView -->
+        <TextView
+            android:id="@+id/realtime_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:padding="16dp"
+            android:textSize="22sp"
+            android:textColor="@color/mp_color_secondary"
+            android:gravity="center"
+            android:background="@android:color/transparent" />
+
+
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/fragment_container"
+            android:background="@android:color/darker_gray" />
+    </RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
