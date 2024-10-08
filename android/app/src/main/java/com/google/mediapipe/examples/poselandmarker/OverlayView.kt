@@ -43,9 +43,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     private var imageWidth: Int = 1
     private var imageHeight: Int = 1
 
-    private val teachingActivity = TeachingActivity()
-
-//    private var currentStage: Int = 0
     private var evaluationText: String = "Welcome"
 
     init {
@@ -96,10 +93,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
                         poseLandmarkerResult.landmarks().get(0).get(it.end()).y() * imageHeight * scaleFactor,
                         linePaint)
                 }
-//                currentStage = teachingActivity.checkCurrentStage().currentStage
-//                print(currentStage)
-//                val evaluationText = evaluatePose(poseLandmarkerResult)
-//                (context as? TeachingActivity)?.showOverlayText(evaluationText)
             }
         }
     }
