@@ -10,8 +10,8 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.welcome)
 
-        val startUsingButton = findViewById<Button>(R.id.startUsingButton)
-        startUsingButton.setOnClickListener {
+        val teachingModeButton = findViewById<Button>(R.id.teachingModeButton)
+        teachingModeButton.setOnClickListener {
             val intent = Intent(this, TeachingActivity::class.java)
             startActivity(intent)
         }

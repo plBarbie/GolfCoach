@@ -23,7 +23,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import com.google.mediapipe.examples.poselandmarker.evaluator.PoseEvaluator
+import com.google.mediapipe.examples.poselandmarker.evaluator.StandingPoseEvaluator
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
@@ -43,7 +43,10 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     private var imageWidth: Int = 1
     private var imageHeight: Int = 1
 
-    private val poseEvaluator = PoseEvaluator()
+    private val teachingActivity = TeachingActivity()
+
+//    private var currentStage: Int = 0
+    private var evaluationText: String = "Welcome"
 
     init {
         initPaints()
@@ -93,17 +96,10 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
                         poseLandmarkerResult.landmarks().get(0).get(it.end()).y() * imageHeight * scaleFactor,
                         linePaint)
                 }
-                // 使用 PoseEvaluator 评估姿势并显示结果
-                val feetDistanceEvaluationMessage = poseEvaluator.checkFeetShoulderWidth(poseLandmarkerResult).message
-                val feetDistanceEvaluationScore = poseEvaluator.checkFeetShoulderWidth(poseLandmarkerResult).score
-                val armsStraightEvaluationMessage = poseEvaluator.checkArmsStraight(poseLandmarkerResult).message
-                val armsStraightEvaluationScore = poseEvaluator.checkArmsStraight(poseLandmarkerResult).score
-                val handsPositionEvaluationMessage = poseEvaluator.checkHandsPosition(poseLandmarkerResult).message
-                val handsPositionEvaluationScore = poseEvaluator.checkHandsPosition(poseLandmarkerResult).score
-                val scoreTotal = feetDistanceEvaluationScore+armsStraightEvaluationScore+handsPositionEvaluationScore
-                (context as? TeachingActivity)?.showOverlayText(
-                    feetDistanceEvaluationMessage+ "\n" + armsStraightEvaluationMessage +"\n"+ handsPositionEvaluationMessage
-                            +"\n"+ "Your score: " + scoreTotal)
+//                currentStage = teachingActivity.checkCurrentStage().currentStage
+//                print(currentStage)
+//                val evaluationText = evaluatePose(poseLandmarkerResult)
+//                (context as? TeachingActivity)?.showOverlayText(evaluationText)
             }
         }
     }
@@ -114,12 +110,14 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
         poseLandmarkerResults: PoseLandmarkerResult,
         imageHeight: Int,
         imageWidth: Int,
-        runningMode: RunningMode = RunningMode.IMAGE
+        runningMode: RunningMode = RunningMode.IMAGE,
+        evaluationText: String
     ) {
         results = poseLandmarkerResults
 
         this.imageHeight = imageHeight
         this.imageWidth = imageWidth
+        this.evaluationText = evaluationText
 
         scaleFactor = when (runningMode) {
             RunningMode.IMAGE,
@@ -133,9 +131,14 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
                 max(width * 1f / imageWidth, height * 1f / imageHeight)
             }
         }
-        // The current view has failed and needs to be redrawn, call draw()
+
+        // Show evaluationText by TeachingActivity.showOverlayText()
+        (context as? TeachingActivity)?.showOverlayText(evaluationText)
+
+        // Redraw()
         invalidate()
     }
+
 
     companion object {
         private const val LANDMARK_STROKE_WIDTH = 12F

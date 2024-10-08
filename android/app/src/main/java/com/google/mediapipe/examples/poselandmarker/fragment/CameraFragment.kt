@@ -39,7 +39,9 @@ import com.google.mediapipe.examples.poselandmarker.PoseLandmarkerHelper
 import com.google.mediapipe.examples.poselandmarker.MainViewModel
 import com.google.mediapipe.examples.poselandmarker.R
 import com.google.mediapipe.examples.poselandmarker.databinding.FragmentCameraBinding
+import com.google.mediapipe.examples.poselandmarker.evaluator.StandingPoseEvaluator
 import com.google.mediapipe.tasks.vision.core.RunningMode
+import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -63,9 +65,15 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private var cameraFacing = CameraSelector.LENS_FACING_FRONT
+    private var currentStage: Int = 1
 
     /** Blocking ML operations are performed using this executor */
     private lateinit var backgroundExecutor: ExecutorService
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        currentStage = arguments?.getInt("CURRENT_STAGE", 1) ?: 1 // Default value is 1
+    }
 
     override fun onResume() {
         super.onResume()
@@ -389,7 +397,8 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                     resultBundle.results.first(),
                     resultBundle.inputImageHeight,
                     resultBundle.inputImageWidth,
-                    RunningMode.LIVE_STREAM
+                    RunningMode.LIVE_STREAM,
+                    evaluatePose(resultBundle.results.first())
                 )
 
                 // Force a redraw
@@ -406,6 +415,18 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                     PoseLandmarkerHelper.DELEGATE_CPU, false
                 )
             }
+        }
+    }
+
+    private fun evaluatePose(poseLandmarkerResult: PoseLandmarkerResult): String {
+        return when (currentStage) {
+            1 -> {
+                StandingPoseEvaluator().returnText(poseLandmarkerResult)
+            }
+            2 -> {
+                "成功了"
+            }
+            else -> "No evaluation available for this stage."
         }
     }
 }

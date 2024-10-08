@@ -7,7 +7,7 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
-class PoseEvaluator {
+class StandingPoseEvaluator {
 
     companion object {
         // Constants for tolerance levels, adjust as needed
@@ -163,5 +163,17 @@ class PoseEvaluator {
                 score = 30
             )
         }
+    }
+
+    fun returnText(poseLandmarks: PoseLandmarkerResult): String{
+        val feetDistanceEvaluationMessage = checkFeetShoulderWidth(poseLandmarks).message
+        val feetDistanceEvaluationScore = checkFeetShoulderWidth(poseLandmarks).score
+        val armsStraightEvaluationMessage = checkArmsStraight(poseLandmarks).message
+        val armsStraightEvaluationScore = checkArmsStraight(poseLandmarks).score
+        val handsPositionEvaluationMessage = checkHandsPosition(poseLandmarks).message
+        val handsPositionEvaluationScore = checkHandsPosition(poseLandmarks).score
+        val scoreTotal = feetDistanceEvaluationScore+armsStraightEvaluationScore+handsPositionEvaluationScore
+
+        return "$feetDistanceEvaluationMessage\n$armsStraightEvaluationMessage\n$handsPositionEvaluationMessage\nYour score: $scoreTotal"
     }
 }

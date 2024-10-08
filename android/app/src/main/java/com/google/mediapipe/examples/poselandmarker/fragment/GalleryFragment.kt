@@ -288,7 +288,8 @@ class GalleryFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                                 result.results[0],
                                 bitmap.height,
                                 bitmap.width,
-                                RunningMode.IMAGE
+                                RunningMode.IMAGE,
+                                "GalleryImage"
                             )
 
                             setUiEnabled(true)
@@ -366,7 +367,8 @@ class GalleryFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                             result.results[resultIndex],
                             result.inputImageHeight,
                             result.inputImageWidth,
-                            RunningMode.VIDEO
+                            RunningMode.VIDEO,
+                            "GalleryVideo"
                         )
 
                         setUiEnabled(true)

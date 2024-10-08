@@ -64,7 +64,7 @@
             android:background="@android:color/transparent"
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav_graph"
-            tools:context=".MainActivity" />
+            tools:context=".TeachingActivity" />
 
         <!-- Real-time TextView on top of the FragmentContainerView -->
         <TextView
@@ -76,6 +76,7 @@
             android:padding="16dp"
             android:textSize="22sp"
             android:textColor="@color/mp_color_secondary"
+            android:textStyle="bold"
             android:gravity="center"
             android:background="@android:color/transparent" />
 

@@ -25,8 +25,17 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Using"
-        android:id="@+id/startUsingButton"
+        android:text="Teaching Mode"
+        android:id="@+id/teachingModeButton"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="40dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Testing Mode"
+        android:id="@+id/testingModeButton"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginTop="40dp"/>
