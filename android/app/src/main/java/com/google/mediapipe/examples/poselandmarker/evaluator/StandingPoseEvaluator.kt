@@ -50,6 +50,13 @@ class StandingPoseEvaluator {
 
     // Check if feet are shoulder-width apart
     fun checkFeetShoulderWidth(poseLandmarks: PoseLandmarkerResult): FeetPositionResult {
+        if (poseLandmarks.landmarks().isEmpty()) {
+            return FeetPositionResult(
+                isCorrect = false,
+                message = "I can't see you.",
+                score = 0
+            )
+        }
         val leftShoulder = poseLandmarks.landmarks().get(0)[11]
         val rightShoulder = poseLandmarks.landmarks().get(0)[12]
         val leftFoot = poseLandmarks.landmarks().get(0)[27]
@@ -87,6 +94,13 @@ class StandingPoseEvaluator {
 
     // Check if both arm angles are close to 180 degrees
     fun checkArmsStraight(poseLandmarks: PoseLandmarkerResult): ArmsStraightResult {
+        if (poseLandmarks.landmarks().isEmpty()) {
+            return ArmsStraightResult(
+                isCorrect = false,
+                message = "",
+                score = 0
+            )
+        }
         val leftShoulder = poseLandmarks.landmarks().get(0)[11]
         val leftElbow = poseLandmarks.landmarks().get(0)[13]
         val leftWrist = poseLandmarks.landmarks().get(0)[15]
@@ -131,6 +145,13 @@ class StandingPoseEvaluator {
 
     // Check if the symmetry axis of both arms is perpendicular to the ground
     fun checkHandsPosition(poseLandmarks: PoseLandmarkerResult): HandsPositionResult {
+        if (poseLandmarks.landmarks().isEmpty()) {
+            return HandsPositionResult(
+                isCorrect = false,
+                message = "",
+                score = 0
+            )
+        }
         val leftShoulder = poseLandmarks.landmarks().get(0)[11]
         val rightShoulder = poseLandmarks.landmarks().get(0)[12]
         // 计算肩膀的中心点
