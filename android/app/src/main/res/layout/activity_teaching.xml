@@ -80,6 +80,20 @@
             android:gravity="center"
             android:background="@android:color/transparent" />
 
+        <TextView
+            android:id="@+id/feedback_countdown_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:padding="16dp"
+            android:textSize="22sp"
+            android:textColor="@color/mp_color_secondary"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:background="@android:color/transparent"
+            android:visibility="gone" /> <!-- 默认隐藏 -->
+
 
 
         <View

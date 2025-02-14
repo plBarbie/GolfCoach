@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +20,8 @@ class TeachingActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
     private lateinit var statusTextView: TextView
+//    private lateinit var backSwingEvaluator: BackSwingEvaluator
+    private val backSwingEvaluator = EvaluatorManager.backSwingPreEvaluator
 
     private var currentStageInt: Int = 1
 
@@ -34,7 +35,11 @@ class TeachingActivity : AppCompatActivity() {
         statusTextView = findViewById(R.id.realtime_text)
 
         activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
-
+// 设置回调监听，当 checkPose 返回 true 时触发 startCountdown()
+        backSwingEvaluator.onPoseCorrectListener = {
+            println("收到了Listener triggered, starting countdown!")
+            startCountdown()
+        }
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
@@ -68,6 +73,7 @@ class TeachingActivity : AppCompatActivity() {
         findViewById<Button>(R.id.button_follow_through).setOnClickListener {
             updateCurrentStage(3)
         }
+
     }
 
     private fun createOverlay() {
@@ -120,7 +126,6 @@ class TeachingActivity : AppCompatActivity() {
             .replace(R.id.fragment_container, cameraFragment)
             .commit()
         // 触发蒙版倒计时
-        startCountdown()
     }
 
     private fun startCountdown() {
@@ -143,6 +148,7 @@ class TeachingActivity : AppCompatActivity() {
                 } else {
                     // 隐藏蒙版
                     overlayFrame.visibility = View.GONE
+                    backSwingEvaluator.resetCheck()
                 }
             }
         }, 1000) // 每秒更新一次

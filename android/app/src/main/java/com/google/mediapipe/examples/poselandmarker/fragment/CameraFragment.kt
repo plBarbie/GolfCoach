@@ -24,17 +24,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
-import androidx.camera.core.Preview
+import androidx.camera.core.AspectRatio
+import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import androidx.camera.core.Camera
-import androidx.camera.core.AspectRatio
+import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
+import com.google.mediapipe.examples.poselandmarker.EvaluatorManager
 import com.google.mediapipe.examples.poselandmarker.PoseLandmarkerHelper
 import com.google.mediapipe.examples.poselandmarker.MainViewModel
 import com.google.mediapipe.examples.poselandmarker.R
@@ -424,7 +425,11 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
                 StandingPoseEvaluator().returnText(poseLandmarkerResult)
             }
             2 -> {
-                "成功了"
+
+                EvaluatorManager.backSwingPreEvaluator.returnText(poseLandmarkerResult)
+            }
+            3 ->{
+                "follow-through"
             }
             else -> "No evaluation available for this stage."
         }

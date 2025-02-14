@@ -49,7 +49,7 @@ class StandingPoseEvaluator {
     )
 
     // Check if feet are shoulder-width apart
-    fun checkFeetShoulderWidth(poseLandmarks: PoseLandmarkerResult): FeetPositionResult {
+    private fun checkFeetShoulderWidth(poseLandmarks: PoseLandmarkerResult): FeetPositionResult {
         if (poseLandmarks.landmarks().isEmpty()) {
             return FeetPositionResult(
                 isCorrect = false,
@@ -57,10 +57,10 @@ class StandingPoseEvaluator {
                 score = 0
             )
         }
-        val leftShoulder = poseLandmarks.landmarks().get(0)[11]
-        val rightShoulder = poseLandmarks.landmarks().get(0)[12]
-        val leftFoot = poseLandmarks.landmarks().get(0)[27]
-        val rightFoot = poseLandmarks.landmarks().get(0)[28]
+        val leftShoulder = poseLandmarks.landmarks()[0][11]
+        val rightShoulder = poseLandmarks.landmarks()[0][12]
+        val leftFoot = poseLandmarks.landmarks()[0][27]
+        val rightFoot = poseLandmarks.landmarks()[0][28]
 
         // 计算肩膀宽度和脚之间的距离
         val shoulderWidth = calculateDistance(leftShoulder.x(), leftShoulder.y(), rightShoulder.x(), rightShoulder.y())
@@ -73,15 +73,15 @@ class StandingPoseEvaluator {
         // 判断双脚距离与肩宽的关系并返回相应结果
         return when {
 //            feetDistance < narrowThreshold -> FeetPositionResult(
-            feetDistance < shoulderWidth -> FeetPositionResult(
+            shoulderWidth-feetDistance > FEET_SHOULDER_TOLERANCE -> FeetPositionResult(
                 isCorrect = false,
-                message = "双脚距离过窄，建议调宽。",
+                message = "Feet too narrow.",
                 score = ((1- abs(feetDistance-shoulderWidth)/shoulderWidth)*30).roundToInt()
             )
 //            feetDistance > wideThreshold -> FeetPositionResult(
-            feetDistance > shoulderWidth -> FeetPositionResult(
+            feetDistance - shoulderWidth >FEET_SHOULDER_TOLERANCE-> FeetPositionResult(
                 isCorrect = false,
-                message = "双脚距离过宽，建议调窄。",
+                message = "Feet too wide apart.",
                 score = ((1- abs(feetDistance-shoulderWidth)/shoulderWidth)*30).roundToInt()
             )
             else -> FeetPositionResult(
@@ -93,7 +93,7 @@ class StandingPoseEvaluator {
     }
 
     // Check if both arm angles are close to 180 degrees
-    fun checkArmsStraight(poseLandmarks: PoseLandmarkerResult): ArmsStraightResult {
+    private fun checkArmsStraight(poseLandmarks: PoseLandmarkerResult): ArmsStraightResult {
         if (poseLandmarks.landmarks().isEmpty()) {
             return ArmsStraightResult(
                 isCorrect = false,
@@ -101,12 +101,12 @@ class StandingPoseEvaluator {
                 score = 0
             )
         }
-        val leftShoulder = poseLandmarks.landmarks().get(0)[11]
-        val leftElbow = poseLandmarks.landmarks().get(0)[13]
-        val leftWrist = poseLandmarks.landmarks().get(0)[15]
-        val rightShoulder = poseLandmarks.landmarks().get(0)[12]
-        val rightElbow = poseLandmarks.landmarks().get(0)[14]
-        val rightWrist = poseLandmarks.landmarks().get(0)[16]
+        val leftShoulder = poseLandmarks.landmarks()[0][11]
+        val leftElbow = poseLandmarks.landmarks()[0][13]
+        val leftWrist = poseLandmarks.landmarks()[0][15]
+        val rightShoulder = poseLandmarks.landmarks()[0][12]
+        val rightElbow = poseLandmarks.landmarks()[0][14]
+        val rightWrist = poseLandmarks.landmarks()[0][16]
 
         val leftArmAngle = calculateAngle(
             leftShoulder.x(), leftShoulder.y(),
@@ -144,7 +144,7 @@ class StandingPoseEvaluator {
     }
 
     // Check if the symmetry axis of both arms is perpendicular to the ground
-    fun checkHandsPosition(poseLandmarks: PoseLandmarkerResult): HandsPositionResult {
+    private fun checkHandsPosition(poseLandmarks: PoseLandmarkerResult): HandsPositionResult {
         if (poseLandmarks.landmarks().isEmpty()) {
             return HandsPositionResult(
                 isCorrect = false,
@@ -152,15 +152,15 @@ class StandingPoseEvaluator {
                 score = 0
             )
         }
-        val leftShoulder = poseLandmarks.landmarks().get(0)[11]
-        val rightShoulder = poseLandmarks.landmarks().get(0)[12]
+        val leftShoulder = poseLandmarks.landmarks()[0][11]
+        val rightShoulder = poseLandmarks.landmarks()[0][12]
         // 计算肩膀的中心点
         val midShoulderX = (leftShoulder.x() + rightShoulder.x()) / 2
-        val midShoulderY = (leftShoulder.y() + rightShoulder.y()) / 2
         // 获取左右手的坐标
-        val leftHand = poseLandmarks.landmarks().get(0)[15] // 左手腕
-        val rightHand = poseLandmarks.landmarks().get(0)[16] // 右手腕
+        val leftHand = poseLandmarks.landmarks()[0][15] // 左手腕
+        val rightHand = poseLandmarks.landmarks()[0][16] // 右手腕
         // 计算左手和右手相对于肩膀中点的x轴偏移
+        val midHandX = (leftHand.x() + rightHand.x()) / 2
         val leftHandOffsetX = abs(leftHand.x() - midShoulderX)
         val rightHandOffsetX = abs(rightHand.x() - midShoulderX)
 
@@ -173,7 +173,7 @@ class StandingPoseEvaluator {
         val rightHandScore = max(0.0f,(1 - (rightHandOffsetX / (shoulderWidth))) * 15)
 
         return when{
-            leftHandScore + rightHandScore < 30 -> HandsPositionResult(
+            abs(midHandX-midShoulderX) > HAND_POSITION_TOLERANCE -> HandsPositionResult(
                 isCorrect = false,
                 message = "Hands are not in the right position.",
                 score = (leftHandScore + rightHandScore).toInt()
